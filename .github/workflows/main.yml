@@ -8,10 +8,17 @@ jobs:
     - name: checkout
       uses: actions/checkout@master # 将代码拷贝到虚机中
 
-    - name: buildAndDeploy
-      uses: JamesIves/github-pages-deploy-action@master 
-      env:
-        ACCESS_TOKEN: ${{ secrets.SECRET_TOKEN }} # 使用刚新建的secret
-        BRANCH: gh-pages # 存放产物的分支名称
-        FOLDER: dist # 存放build后产物的目录
-        BUILD_SCRIPT: sh deploy.sh # 执行的命令
+    - name: build
+      run:|
+          yarn install
+          yarn build
+
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@3.7.1
+        with:
+          # 该workflow需要操作repo，因此需要一个密钥，下面会讲到如何获取这个密钥
+          ACCESS_TOKEN: ${{ secrets.SECRET_TOKEN }}
+          # 发布到的分支
+          BRANCH: gh-pages
+          # 要发布的文件夹
+          FOLDER: dist
